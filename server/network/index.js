@@ -1,14 +1,15 @@
-Worker = require('worker.js');
-Worker.start();
+let Worker = require('./worker.js');
+let worker = new Worker();
+worker.start();
 
 let putHistory = (records) => {
     // I: Refine records here before sending them
 
-    worker.distribute records
+    worker.distribute(records)
 }
 
-api = {
-    onCommand: worker.onCommand
+let api = {
+    onCommand: worker.onCommand,
     putHistory: putHistory
 }
 

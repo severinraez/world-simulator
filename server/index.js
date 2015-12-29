@@ -1,6 +1,5 @@
-network = require('network')
-
-world = require('simulation')
+let network = require('./network')
+let world = require('./simulation')
 
 class PutCommand {
     constructor(params) {
@@ -13,17 +12,17 @@ class PutCommand {
     }
 }
 
-commands = {
+let commands = {
     'put': PutCommand
 }
 
-network.onCommand (commandParams) => {
+network.onCommand((commandParams) => {
     let commandKlass = commands[commandParams.name]
     let command = new commandKlass(commandParams)
     
     command.apply(world)
-}
+})
 
-world.onHistory (records) => {
-    network.putHistory records
-}
+world.onHistory((records) => {
+    network.putHistory(records)
+})

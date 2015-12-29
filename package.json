@@ -1,0 +1,23 @@
+{
+  "name": "world-simulator",
+  "version": "1.0.0",
+  "description": "This won't attempt to simulate the world.",
+  "main": "index.js",
+  "dependencies": {
+    "nodejs-websocket": "^1.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/severinraez/world-simulator.git"
+  },
+  "author": "Severin Räz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/severinraez/world-simulator/issues"
+  },
+  "homepage": "https://github.com/severinraez/world-simulator#readme"
+}
