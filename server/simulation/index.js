@@ -2,12 +2,14 @@ let util = require('../../shared/lib/util.js')
 let grid = require('./grid.js')
 let _ = require('underscore')
 
-let plantCells = (grid) => {
+
+let pluckPlantCells = (grid) => {
     return util.map2filter(grid, (cell) => { return cell.plant !== undefined })
 }
+let pluckPlants = (cells) => { return _.compact(_.pluck(cells, 'plant')) }
 
 let processNature = (nature, sizeX, sizeY) => {
-    let cells = plantCells(nature);
+    let cells = pluckPlantCells(nature);
 
     let changes = _.map(cells, (cell) => { 
 	let change = growPlant(cell.plant, grid.neighbours(cell.coords, nature, sizeX, sizeY))
@@ -15,8 +17,6 @@ let processNature = (nature, sizeX, sizeY) => {
     })
     return changes
 }
-
-let pluckPlants = (cells) => { return _.compact(_.pluck(cells, 'plant')) }
 
 let growPlant = (plant, neighbours) => {
     let neighbourPlants = pluckPlants(neighbours())
@@ -26,8 +26,7 @@ let growPlant = (plant, neighbours) => {
 
     return { size: plant.size * factor }
 }
-
-let seed = (count, grid, d1, d2) => {
+let seedPlants = (count, grid, d1, d2) => {
     let plants = _.map(_.range(count), () => {
 	let coords = [
 	    Math.floor(Math.random() * d1),
@@ -37,13 +36,15 @@ let seed = (count, grid, d1, d2) => {
     })
     return plants
 }
-
 let spawnPlant = (size) => {
     return { size: size }
 }
 
+/* =============================================
 
-// imperative part: world state
+imperative part: world state
+
+*/
 let sizeX = 10
 let sizeY = 10
 
@@ -56,7 +57,7 @@ let destructiveApply = (changes, targetGrid) => {
 
 let spawnNature = () => {
     let nature = grid.build(sizeX, sizeY);    
-    let seeds = seed(20, grid, sizeX, sizeY);
+    let seeds = seedPlants(20, grid, sizeX, sizeY);
     destructiveApply(seeds, nature);
     return nature;
 }
@@ -70,7 +71,7 @@ let step = () => {
 
     destructiveApply(natureChanges, world.nature)
 
-    return plantCells(world.nature)
+    return pluckPlantCells(world.nature)
 }
 
 

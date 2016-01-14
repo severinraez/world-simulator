@@ -17,12 +17,12 @@ let bound = (n, b) => {
 	return b + (n % b)
     }
 }
-
 // bounds a 2d vector form 0-d1 and 0-d2
 let bound2 = (vec, d1, d2) => {
     return [ bound(vec[0], d1), bound(vec[1], d2) ];
 }
 
+// build a 2d grid of cells
 let build = (sizeX, sizeY) => {
     let grid = _.map(_.range(sizeY), (y) => {
 	let row =  _.map(_.range(sizeX), (x) => {
@@ -33,6 +33,7 @@ let build = (sizeX, sizeY) => {
     return grid
 }
 
+// get the cell at coords of grid
 let at = (coords, grid) => { 
     try { 
 	return grid[ coords[0] ][ coords[1] ] }
@@ -40,7 +41,7 @@ let at = (coords, grid) => {
 	throw new Error(`grid access outside bounds at ${coords[0]}:${coords[1]}`) 
     }
 }
-
+// get all neighbour cells of the cell at coords (attn: torus world!)
 let neighbours = (coords, grid, sizeX, sizeY) => {    
     return () => {
 	let cells = _.map(DIRECTIONS, (direction) => {
