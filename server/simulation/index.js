@@ -1,21 +1,30 @@
 let util = require('../../shared/lib/util.js')
 let grid = require('./grid.js')
-let _ = require('underscore');
+let _ = require('underscore')
 
-let processNature = (nature) => {
-    let cells = util.map2filter(nature, (cell) => { return cell.plant !== undefined })
-    let change = _.map(cells, (cell) => { 
-	growPlant(cell.plant, neighbours(nature, cell.coords)) 
-    })
-    return change;
+let plantCells = (grid) => {
+    return util.map2filter(grid, (cell) => { return cell.plant !== undefined })
 }
 
-let pluckPlants = (cells) => { _.compact(_.pluck(cells, 'plant')) }
+let processNature = (nature, sizeX, sizeY) => {
+    let cells = plantCells(nature);
+
+    let changes = _.map(cells, (cell) => { 
+	let change = growPlant(cell.plant, grid.neighbours(cell.coords, nature, sizeX, sizeY))
+	return { coords: cell.coords, plant: change }
+    })
+    return changes
+}
+
+let pluckPlants = (cells) => { return _.compact(_.pluck(cells, 'plant')) }
 
 let growPlant = (plant, neighbours) => {
-    let growFactor = 1.2 +  _.length(neighbours()) * 0.1
+    let neighbourPlants = pluckPlants(neighbours())
+    let baseFactor = 1.2
+    let friendsFactor = _.size(neighbourPlants) * 0.1
+    let factor = baseFactor + friendsFactor
 
-    return { size: plant.size }
+    return { size: plant.size * factor }
 }
 
 let seed = (count, grid, d1, d2) => {
@@ -26,33 +35,46 @@ let seed = (count, grid, d1, d2) => {
 	]
 	return { coords: coords, plant: { size: 1 } }
     })
-    return plants;
-}
-
-// imperative part: world state
-let sizeX = 50
-let sizeY = 50
-
-let world = {
-    nature: seed(50, grid.build(sizeX, sizeY), sizeX, sizeY)
+    return plants
 }
 
 let spawnPlant = (size) => {
     return { size: size }
 }
 
-let step = () => {   
-    return world.nature;
-    let natureDiff = processNature(world.nature)
-    return natureDiff;
 
-    // intentional destructive update (let's pretend we need to be performant)
-    let newWorld = applyDiff(world, natureDiff)
+// imperative part: world state
+let sizeX = 10
+let sizeY = 10
 
-    return newWorld
+let destructiveApply = (changes, targetGrid) => {
+    _.each(changes, (change) => {
+	let cell = grid.at(change.coords, targetGrid)
+	_.extend(cell, change)
+    })
+}
+
+let spawnNature = () => {
+    let nature = grid.build(sizeX, sizeY);    
+    let seeds = seed(20, grid, sizeX, sizeY);
+    destructiveApply(seeds, nature);
+    return nature;
+}
+
+let world = {
+    nature: spawnNature()
+}
+
+let step = () => {
+    let natureChanges = processNature(world.nature, sizeX, sizeY)
+
+    destructiveApply(natureChanges, world.nature)
+
+    return plantCells(world.nature)
 }
 
 
 module.exports = {
     step: step
 }
+

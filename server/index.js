@@ -1,7 +1,17 @@
 //let network = require('./network')
 let simulation = require('./simulation')
+let _ = require('underscore')
 
-console.log(simulation.step());
+let run = () => {
+    let time = new Date();
+    process.stdout.write('\n');
+    let results = simulation.step();
+    console.log(results);    
+
+    process.stdout.write('(took ' + ((new Date()) - time)/1000 + 's)\n');
+}
+
+setInterval(run, 1000)
 
 /*
 class PutCommand {
