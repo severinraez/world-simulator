@@ -7,7 +7,7 @@ let pluckPlantCells = (grid) => {
     return util.map2filter(grid, (cell) => { return cell.plant !== undefined })
 }
 let pluckEmptyCells = (grid) => {
-    return util.map2filter(grid, (cell) => { return cell.plant == undefined })
+    return util.map2filter(grid, (cell) => { return cell.plant === undefined })
 }
 let pluckPlants = (cells) => { return _.compact(_.pluck(cells, 'plant')) }
 
@@ -20,6 +20,7 @@ let processNature = (nature, sizeX, sizeY) => {
     })
 
     let deadCells = pluckEmptyCells(nature);
+    console.log(deadCells);
     let population = _.size(liveCells) / ( sizeX * sizeY );
     let spawnChanges = _.map(deadCells, (cell) => { 
 	let change = spawnOffspring(cell, grid.neighbours(cell.coords, nature, sizeX, sizeY), population)
@@ -30,6 +31,8 @@ let processNature = (nature, sizeX, sizeY) => {
 	    return null;
 	}
     })
+
+    console.log(_.compact(spawnChanges));
 
     return growChanges.concat(_.compact(spawnChanges));
 }
@@ -101,7 +104,7 @@ let step = () => {
 
     destructiveApply(natureChanges, world.nature)
 
-    return pluckPlantCells(world.nature)
+    return world.nature
 }
 
 
