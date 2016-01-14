@@ -6,7 +6,7 @@ let run = () => {
     let time = new Date();
     process.stdout.write('\n');
     let results = simulation.step();
-    console.log(results);    
+    console.log(results);
 
     process.stdout.write('(took ' + ((new Date()) - time)/1000 + 's)\n');
 }
