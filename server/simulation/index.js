@@ -1,5 +1,6 @@
 let util = require('../../shared/lib/util.js')
 let grid = require('./grid.js')
+let replication = require('app/shared/lib/object-replication.js')
 let _ = require('underscore')
 
 
@@ -81,7 +82,7 @@ let sizeY = 50
 let destructiveApply = (changes, targetGrid) => {
     _.each(changes, (change) => {
 	let cell = grid.at(change.coords, targetGrid)
-	_.extend(cell, change)
+	replication.apply(change, cell)
     })
 }
 
