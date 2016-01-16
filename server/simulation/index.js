@@ -1,3 +1,5 @@
+'use strict'
+
 let util = require('../../shared/lib/util.js')
 let grid = require('./grid.js')
 let replication = require('app/shared/lib/object-replication.js')

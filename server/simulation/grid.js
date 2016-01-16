@@ -1,3 +1,5 @@
+'use strict'
+
 let util = require('../../shared/lib/util.js')
 let _ = require('underscore');
 

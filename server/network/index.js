@@ -1,3 +1,5 @@
+'use strict'
+
 let Worker = require('./worker.js');
 let worker = new Worker();
 worker.start();

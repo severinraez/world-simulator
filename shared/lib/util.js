@@ -1,4 +1,6 @@
-let _ = require('underscore');
+'use strict'
+
+let _ = require('underscore')
 
 // vector operations
 let add2 = (v1, v2) => { return [ v1[0] + v2[0], v1[1] + v2[1] ] }

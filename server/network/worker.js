@@ -1,3 +1,5 @@
+'use strict'
+
 let ws = require("nodejs-websocket")
 
 class Worker {

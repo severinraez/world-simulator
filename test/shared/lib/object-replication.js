@@ -1,4 +1,5 @@
-'use strict';
+'use strict'
+
 let expect = require('chai').expect
 let replication = require('app/shared/lib/object-replication.js')
 

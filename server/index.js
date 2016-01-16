@@ -1,3 +1,5 @@
+'use strict'
+
 //let network = require('./network')
 let simulation = require('./simulation')
 let _ = require('underscore')

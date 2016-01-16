@@ -1,3 +1,5 @@
+'use strict'
+
 class World {
     onHistory(callback) {
 	if(this.historyCallback) { throw 'only one callback allowed'; }
