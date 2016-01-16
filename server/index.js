@@ -14,9 +14,12 @@ let run = () => {
 }
 
 let render = (grid) => {
-    let rows = _.map(grid, (row) => {
+    // grid is [x][y]
+    let transposed = _.zip.apply(this, grid)
+    let rows = _.map(transposed, (row) => {
 	return _.map(row, renderCell).join('')
-    });
+    }); 
+
     return rows.join('\n');
 }
 

@@ -20,7 +20,6 @@ let processNature = (nature, sizeX, sizeY) => {
     })
 
     let deadCells = pluckEmptyCells(nature);
-    console.log(deadCells);
     let population = _.size(liveCells) / ( sizeX * sizeY );
     let spawnChanges = _.map(deadCells, (cell) => { 
 	let change = spawnOffspring(cell, grid.neighbours(cell.coords, nature, sizeX, sizeY), population)
@@ -31,8 +30,6 @@ let processNature = (nature, sizeX, sizeY) => {
 	    return null;
 	}
     })
-
-    console.log(_.compact(spawnChanges));
 
     return growChanges.concat(_.compact(spawnChanges));
 }
@@ -78,8 +75,8 @@ let spawnPlant = (size) => {
 imperative part: world state
 
 */
-let sizeX = 10
-let sizeY = 10
+let sizeX = 100
+let sizeY = 50
 
 let destructiveApply = (changes, targetGrid) => {
     _.each(changes, (change) => {

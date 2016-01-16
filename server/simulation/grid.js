@@ -24,8 +24,8 @@ let bound2 = (vec, d1, d2) => {
 
 // build a 2d grid of cells
 let build = (sizeX, sizeY) => {
-    let grid = _.map(_.range(sizeY), (y) => {
-	let row =  _.map(_.range(sizeX), (x) => {
+    let grid = _.map(_.range(sizeX), (x) => {
+	let row =  _.map(_.range(sizeY), (y) => {
 	    return { coords: [x, y] }	    
 	})
 	return row;
