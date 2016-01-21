@@ -5,14 +5,14 @@ let simulation = require('./simulation')
 let _ = require('underscore')
 
 let run = () => {
-    let time = new Date();
-    process.stdout.write('\n');
-    let results = simulation.step();
-    let duration = ((new Date()) - time)/1000;
+    let time = new Date()
+    process.stdout.write('\n')
+    let results = simulation.step()
+    let duration = ((new Date()) - time)/1000
 
-    process.stdout.write(render(results) + '\n');
+    process.stdout.write(render(results) + '\n')
 
-    process.stdout.write('(took ' + duration + 's)\n');
+    process.stdout.write('(took ' + duration + 's)\n')
 }
 
 let render = (grid) => {
@@ -22,20 +22,20 @@ let render = (grid) => {
 	return _.map(row, renderCell).join('')
     }); 
 
-    return rows.join('\n');
+    return rows.join('\n')
 }
 
 let renderCell = (cell) => {
     if(cell.plant) {
-	let size = cell.plant.size;
+	let size = cell.plant.size
 	if(size < 1) return '.';	    
-	if(size < 3) return ',';
-	if(size < 6) return '+';
-	if(size < 12) return '*';
-	return '#';
+	if(size < 3) return ','
+	if(size < 6) return '+'
+	if(size < 12) return '*'
+	return '#'
     }
     else {
-	return ' ';
+	return ' '
     }
 }
 
