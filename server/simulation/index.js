@@ -1,15 +1,22 @@
 'use strict'
 
-let nature = require('./nature.js')
-
-let grid = require('./grid.js')
+const nature = require('./nature.js')
+const grid = require('./grid.js')
 
 let sizeX = 100
 let sizeY = 50
 
-let world = {
-    nature: nature.spawn(sizeX, sizeY)
+let createWorld = () => {
+    let seeds = nature.seedPlants(20, sizeX, sizeY)
+    let theNature = grid.applyChanges(seeds, 
+				   nature.spawn(sizeX, sizeY))
+    
+    return {
+	nature: theNature
+    }
 }
+
+let world = createWorld()
 
 let step = () => {
     let natureChanges = nature.step(world.nature, sizeX, sizeY)
@@ -19,6 +26,5 @@ let step = () => {
 }
 
 module.exports = {
-    step: step
-    
+    step: step    
 }

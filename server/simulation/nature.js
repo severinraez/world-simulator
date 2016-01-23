@@ -1,7 +1,6 @@
 'use strict'
 
 let util = require('app/shared/lib/util.js')
-let replication = require('app/shared/lib/replication.js')
 let grid = require('./grid.js')
 
 let _ = require('underscore')
@@ -82,14 +81,11 @@ let spawnPlant = (size) => {
 }
 
 let spawn = (sizeX, sizeY) => {
-    let seeds = seedPlants(20, sizeX, sizeY)
-    let nature = grid.applyChanges(seeds, 
-				   grid.build(sizeX, sizeY))
-
-    return nature
+    return grid.build(sizeX, sizeY)
 }
 
 module.exports = {
     spawn: spawn,
+    seedPlants: seedPlants,
     step: step
 }
