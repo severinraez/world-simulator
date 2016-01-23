@@ -10,7 +10,7 @@ node v5.
 
 ### Running the server
 
-    nodemon server/index.js
+    nodemon --harmony_destructuring server/index.js
 
 ### Tests
 

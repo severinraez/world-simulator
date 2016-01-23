@@ -19,7 +19,10 @@ let step = (nature, sizeX, sizeY) => {
 
     let growChanges = _.map(liveCells, (cell) => { 
 	let change = growPlant(cell.plant, grid.neighbours(cell.coords, nature, sizeX, sizeY))
-	return { coords: cell.coords, plant: change }
+	if(change) { 
+	    return { coords: cell.coords, plant: change } }
+	else { 
+	    return null }
     })
 
     let deadCells = pluckEmptyCells(nature);
@@ -27,23 +30,28 @@ let step = (nature, sizeX, sizeY) => {
     let spawnChanges = _.map(deadCells, (cell) => { 
 	let change = spawnOffspring(cell, grid.neighbours(cell.coords, nature, sizeX, sizeY), population)
 	if(change) {
-	    return { coords: cell.coords, plant: change }
-	}
+	    return { coords: cell.coords, plant: change } }
 	else {
-	    return null;
-	}
+	    return null	}
     })
 
-    return growChanges.concat(_.compact(spawnChanges));
+    return _.compact(growChanges.concat(spawnChanges));
 }
 
 let growPlant = (plant, neighbours) => {
+    let maxSize = 50
+    if(plant.size == maxSize) {
+	return null; 
+    }
+
     let neighbourPlants = pluckPlants(neighbours())
     let baseFactor = 1.2
-    let friendsFactor = _.size(neighbourPlants) * 0.1
-    let factor = baseFactor + friendsFactor
 
-    return { size: plant.size * factor }
+    let friendsFactor = _.size(neighbourPlants) * 0.1
+    let factor = baseFactor + friendsFactor    
+    let unboundedSize = plant.size * factor
+
+    return { size: Math.min(unboundedSize, maxSize)}
 }
 // possibly populates an empty cell with a plant.
 // population: number in interval [0,1]

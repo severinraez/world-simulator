@@ -15,11 +15,10 @@ let step = () => {
     let natureChanges = nature.step(world.nature, sizeX, sizeY)
     grid.applyChanges(natureChanges, world.nature)
 
-    return world.nature
+    return [natureChanges, world.nature]
 }
-
 
 module.exports = {
     step: step
+    
 }
-
