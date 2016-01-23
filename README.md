@@ -2,8 +2,26 @@
 
 No, this does not try to simulate the world.
 
-## Starting
+## Prerequisites
 
-Using node version 5, do 
+node v5.
 
-    node --use_strict server/index.js
+## Commands
+
+### Running the server
+
+    nodemon server/index.js
+
+### Tests
+
+Specific ones:
+
+    npm-exec mocha test/shared/lib/
+
+    cat $(which npm-exec)
+
+=>
+
+    #!/bin/bash
+    command=$@
+    $(npm bin)/$command
