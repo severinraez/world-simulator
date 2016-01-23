@@ -3,6 +3,8 @@
 let util = require('../../shared/lib/util.js')
 let _ = require('underscore');
 
+let replication = require('app/shared/lib/replication.js')
+
 // delta steps to take to move in a certain direction. starts with 'up' and moves clockwise.
 const DIRECTIONS  = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]]
 
@@ -54,11 +56,21 @@ let neighbours = (coords, grid, sizeX, sizeY) => {
     }
 }
 
+// @param changes { coords: [x,y], dataToOverwrite }
+let applyChanges = (changes, targetGrid) => {
+    _.each(changes, (change) => {
+	let cell = at(change.coords, targetGrid)
+	replication.apply(change, cell)
+    })
+    return targetGrid
+}
+
 module.exports = {
     DIRECTIONS: DIRECTIONS,
     at: at,
     bound: bound,
     bound2: bound2,
     build: build,
-    neighbours: neighbours
+    neighbours: neighbours,
+    applyChanges: applyChanges
 }

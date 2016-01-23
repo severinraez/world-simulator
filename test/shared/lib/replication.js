@@ -1,9 +1,9 @@
 'use strict'
 
 let expect = require('chai').expect
-let replication = require('app/shared/lib/object-replication.js')
+let replication = require('app/shared/lib/replication.js')
 
-describe('object replication', () => {
+describe('replication', () => {
     before(function() {
     })
     describe('diff applying', function() {
