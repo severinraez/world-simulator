@@ -7,14 +7,14 @@ let nodes = ['display']
 
 const ROLES_TO_CODE = {
     master: './nodes/master',
-    display: './nodes/display'    
+    display: './nodes/display'
 }
 
 let log = require('app/shared/lib/log.js').create('server-index', (message) => {
     return message;
 })
 
-let flowPromise = computeNode.initialize(nodes, (role) => {    
+let flowPromise = computeNode.initialize(nodes, (role) => {
     let code = ROLES_TO_CODE[role]
     if(!code) {
 	throw 'no code found for role ' + role }
@@ -23,6 +23,6 @@ let flowPromise = computeNode.initialize(nodes, (role) => {
     return flow;
 })
 
-flowPromise.then((flow) => { 
+flowPromise.then((flow) => {
     flow()
 })

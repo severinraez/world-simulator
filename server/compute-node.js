@@ -13,7 +13,7 @@ const Promise = require('bluebird')
 
   {
     run: () => {}, // function called to set up the node. setup is considered complete when this function returns
-    source: (message) => {} // function called when the node receives a message. 
+    source: (message) => {} // function called when the node receives a message.
   }
 
   once node setup is complete, the system will consider the node *initialized*. from now on, the nodes' source may receive messages.
@@ -31,7 +31,7 @@ const MESSAGE_TYPES = { // non-computation internode communication
 }
 
 let thisNode = { // state of current process' compute-node binding
-    role: null, 
+    role: null,
     workers: {}, // { role: [ worker (cluster.fork result), ... ]
     sink: null, // sink for incoming data, (data) => { ... }
     initialized: false // whether initialization is complete and the node can start to compute
@@ -52,7 +52,7 @@ let initialize = (config, behaviourBuilder) => {
 
 // starts the workers, yields nodes' run behaviour once theyre ready
 let initMaster = (config, behaviourBuilder) => {
-    thisNode.role = 'master'    
+    thisNode.role = 'master'
 
     log('initializing')
     return new Promise((resolve, reject) => {
@@ -64,7 +64,7 @@ let initMaster = (config, behaviourBuilder) => {
 	workersPromise.then((workers) => {
             log('workers ready')
 	    thisNode.workers = groupWorkersByRole(workers)
-	    thisNode.initialized = true	    
+	    thisNode.initialized = true
 
 	    resolve(behaviour.run)
 	})
@@ -78,7 +78,7 @@ let groupWorkersByRole = (workers) => {
 	let [role, ] = workerData;
 	return role;
     })
-    _.each(_.keys(groupedWorkers), (role) => {		
+    _.each(_.keys(groupedWorkers), (role) => {
 	groupedWorkers[role] = _.map(groupedWorkers[role], (workerData) => {
 	    let [, worker] = workerData;
 	    return worker;
@@ -97,7 +97,7 @@ let spawnWorkers = (config, sink) => {
 
 /*
   spawns a child process and coordinates it's setup as a node.
-  
+
   @param role role of the node
   @param sink source part of the compute-node definition. this function makes sure it's called with all messages the node receives
   @return promise that resolves into [worker, ...] as soon as all worker nodes are initialized
@@ -106,7 +106,7 @@ let spawnWorker = (role, sink) => {
     return new Promise((resolve, reject) => {
 	let worker = cluster.fork()
 	let initialized = false;
-	
+
 	worker.on('online', () => {
 	    // tell the worker with which node definition to initialize
 	    worker.send(buildInitMessage(role));
@@ -126,7 +126,7 @@ let spawnWorker = (role, sink) => {
 	    else {
 		if(isReadyMessage(message)) {
 		    log('worker with role ' + role + ' initialized')
-		    resolve([role, worker])		    
+		    resolve([role, worker])
 		    initialized = true
 		} else {
 		    reject('first message from ' + workerRole + ' worker was no init message')
@@ -143,17 +143,17 @@ let buildReadyMessage = () => { return { type: MESSAGE_TYPES.ready } }
 
 /*
   makes current process a worker.
-  
+
   awaits configuration instructions from the master and delegates running the node to the caller.
-  
+
   @return promise that will resolve to run-part of compute node definition as soon as initialization is finished.
 */
 let initWorker = (behaviourBuilder) => {
-    return new Promise((resolve, reject) => {	
+    return new Promise((resolve, reject) => {
 	process.on('message', (message) => {
 	    if(thisNode.initialized) {
 		thisNode.sink(message)
-	    } else {		
+	    } else {
 		if(isInitMessage(message)) {
 		    let role = message.role
 		    thisNode.role = role
@@ -162,8 +162,8 @@ let initWorker = (behaviourBuilder) => {
 		    thisNode.sink = behaviour.source
 
 		    thisNode.initialized = true
-		    let runTap = () => {			
-			workerSend('master', buildReadyMessage())	
+		    let runTap = () => {
+			workerSend('master', buildReadyMessage())
 			behaviour.run()
 		    }
 
@@ -187,12 +187,12 @@ let workerSend = (role, message) => {
 let masterSend = (role, message) => {
     if(role == 'master') {
 	throw 'master cannot send to himself' }
-    _.each(thisNode.workers[role], (worker) => { worker.send(message) })    
+    _.each(thisNode.workers[role], (worker) => { worker.send(message) })
 }
 
 let send = (role, message) => {
     if(isMaster) {
-	masterSend(role, message) }    
+	masterSend(role, message) }
     else {
 	workerSend(role, message) }
 }
