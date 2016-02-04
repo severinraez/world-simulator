@@ -28,23 +28,21 @@ let graph = graph.graph({
 })
 
 // Set up where each vertice will be computed
-let roles = hosts.roles({
+let roles = host.roles({
     // role name => [ verticeName1, verticeName2 ]
     'main': ['i', 'p']
 })
 
-// Connect to the hosts
-let hostsReadyPromise = hosts.connect(['localhost'])
 
 // Assign the distribution roles from above to devices
 let roles = {
     'main': 'localhost'
 }
 
-hostsReadyPromise.then (hosts) => {
+host.connect(['localhost']).then (host) => {
 
     //Start the fun.
-    hosts.begin(graph, roles, hosts)
+    host.begin(graph, roles, host)
 
 }
 
