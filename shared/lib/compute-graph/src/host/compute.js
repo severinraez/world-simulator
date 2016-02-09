@@ -13,7 +13,7 @@ let workAssigner = (runners) => {
     }
 }
 
-let initialize = (mission) => {
+let initialize = (mission, work) => {
     let graph = graph.graph( mission.graph )
 
     // Data flow: inbox -> assigner -> runners -> outbox
@@ -23,9 +23,10 @@ let initialize = (mission) => {
     let assigner = workAssigner( runners )
 
     let inbox = postman.inbox( assigner )
-
 }
 
-host.getMissionAnd(initialize)
-
-
+let cooperate = (work) => {
+    network.getMission().then (mission) => {
+        initialize(mission, work)
+    }
+}
