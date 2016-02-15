@@ -1,4 +1,13 @@
 'use strict'
+/*
+
+ The network package prepares coordination channels for cooperation.
+
+ * establishing websocket connection
+ * mission statement distribution
+ * provides communication channels for work items
+
+ */
 
 const Promise = require('bluebird')
 const host = require('host')
