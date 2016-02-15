@@ -14,6 +14,10 @@ let getMission = () => {
     }
 }
 
+let setMission = (mission) => {
+    missionPromise.resolve(mission)
+}
+
 let communicateMission = (socket) => {
     readyPromise = new Promise()
 

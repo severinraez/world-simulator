@@ -19,10 +19,10 @@ let start = (mission, work) => {
     // Data flow: inbox -> assigner -> runners -> outbox
     let outbox = postman.outbox( mission.roles, mission.hosts )
 
-    let runners = runner.spawn( graph, mission.roles, mission.work, outbox )
+    let runners = runner.spawn( graph, mission.roles, work, outbox )
     let assigner = workAssigner( runners )
 
-    let inbox = postman.inbox( assigner )
+    postman.inbox( mission.roles, assigner )
 }
 
 module.exports = {

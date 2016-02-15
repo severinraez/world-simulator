@@ -12,25 +12,24 @@ let buildMission = ( graph, roles, hosts ) => {
         graph: graph, roles: roles, hosts: hosts }
 }
 
-let begin = (work, flow, roles, devices) => {
-    // Initialize devices.
+let begin = (flow, roles, devices) => {
+    // Build a mission statement describing the organisation of work.
     let mission = buildMission(graph, roles, hosts)
-    network.setMission(mission)
 
-    // Initialize local device (if needed).
-    if(roles['localhost']) {
-        compute.start(mission, work)
-    }
+    // Distribute the mission.
+    network.setMission(mission)
 }
 
 let cooperate = (work) => {
-    // Await configuration
+    // Await configuration...
     network.getMission().then (mission) => {
-        // Initialize local device
+        // ...and initialize local device.
         compute.start(mission, work)
     }
 }
 
 module.exports = {
+    begin: begin,
+    cooperate: cooperate,
     roles: roles
 }
