@@ -1,52 +1,54 @@
 'use strict'
 /*
 
- The postman package provides host-level deliveries.
+ The Postman delivers work messages.
 
- Packages are adressed to a role and the postman will route them
-
- * between processes (including loopback deliveries)
- * from the local host to the network if the role is exercised by another host
- * from the network to the correct process
-
- TODO: Think about this: Postman will do a lot of plumbing work. Looks like stateful is the pragmatic way to go here?
- TODO: Architectural approach: Create a delivery systems and add inboxes with role address to them so postman can deliver the message only
  */
 
-const network = require('network')
+class Postman {
 
-let inboxes = []
-let localDelivery = (item) => {
-    inboxes.forEach((inbox) => {
-        inbox(item)
-    })
-}
+    // localRoles - array of role names where delivery should be done locally
+    constructor(localRoles) {
+        this.localRoles = localRoles
 
-network.onData((data) => {
-    let item = data;
-    localDelivery(item)
-})
-
-let createInbox = ( roles, handler ) => {
-    let inbox = (item) => {
-        handler(item)
+        this.outboundCallback = null
+        this.inboxCallback = null
     }
-    inboxes.push(inbox)
-}
 
-let createOutbox = ( roles, hosts ) => {
-    let routing = routing(roles, hosts)
-    return (item) => {
-        if(isLocal(item, routing)) {
-            localDelivery(item, routing)
-        }
-        if(isRemote(item, routing)) {
-            remoteDelivery(item, routing)
-        }
+    // Deliver a message from the outside world.
+    inbound(message) {
+        this.verify(messsage)
+
+        if(this._isLocalRole(message.role)) {
+            this.inboxCallback(message) }
+        else {
+            throw "I am not a " + message.role }
+    }
+
+    // Set a callback that will receive messages to the outside world.
+    outbound(callback) { this.outboundCallback = callback }
+
+    // Set a callback that will receive local messages.
+    inbox(callback) { this.inboxCallback = callback }
+
+    // Deliver a message with local origin.
+    outbox(message) {
+        this.verify(message)
+
+        if(this._isLocalRole(message.role)) {
+            this.inboxCallback(message) }
+        else {
+            this.outboundCallback(message) }
+    }
+
+    _verify(message) {
+        if(!message.role || !message.data) {
+            throw "unknown message format" }
+    }
+
+    _isLocalRole(role) {
+        return this.localRoles.indexOf(role) != -1
     }
 }
 
-module.exports = {
-    inbox: createInbox,
-    outbox: createOutbox
-}
+module.exports = Postman

@@ -1,39 +1,34 @@
 'use strict'
 /*
 
- The compute package sets up computing infrastructure and distributes work.
+ The compute package sets up computing infrastructure and schedules work.
 
  * Initializes runners for the local node according to its roles
- * Distributes inbound work items
 
- TODO: With postman doing the IPC, most likely inboxes and outboxes can be maintained by the runners themselves. See TODOs at postman.
  */
 
-const runner = require('runner')
-const graph = require('graph')
-const postman = require('postman')
+const Runner = require('runner')
 
-let workAssigner = (runners) => {
-    return (item) => {
-        let role  = item.destination
-        let message = item.message
+class Compute {
+    constructor(runner) {
+        this.runner = runner
 
-        runner.process(message, role, runners)
+        this.outboxCallback = null
+    }
+
+    //TODO: pass work in
+
+    static make() {
+        new Compute(new Runner())
+    }
+
+    process(workId, data) {
+        return this.runner.process(data, this._getWork(workId))
+    }
+
+    _getWork(id) {
+        return this.work[id];
     }
 }
 
-let start = (mission, work) => {
-    let graph = graph.graph( mission.graph )
-
-    // Data flow: inbox -> assigner -> runners -> outbox
-    let outbox = postman.outbox( mission.roles, mission.hosts )
-
-    let runners = runner.spawn( graph, mission.roles, work, outbox )
-    let assigner = workAssigner( runners )
-
-    postman.inbox( mission.roles, assigner )
-}
-
-module.exports = {
-    start: start
-}
+module.exports = Compute

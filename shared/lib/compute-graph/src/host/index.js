@@ -1,35 +1,75 @@
 'use strict';
 
-const compute = require('compute')
-const network = require('network')
+const Compute = require('compute')
+const Network = require('network')
+const Postman = require('postman')
 
-let roles = (spec) => {
-    return spec
-}
+const graph = require('graph')
 
-let buildMission = ( graph, roles, hosts ) => {
-    return {
-        graph: graph, roles: roles, hosts: hosts }
-}
+class Host {
+    construct(network, compute, postman) {
+        this.network = network
+        this.compute = compute
+        this.postman = postman
 
-let begin = (flow, roles, devices) => {
-    // Build a mission statement describing the organisation of work.
-    let mission = buildMission(graph, roles, hosts)
+        this._setupCommunications()
+    }
 
-    // Distribute the mission.
-    network.setMission(mission)
-}
+    static make() {
+        return new Host(new Network(), Compute.make(), new Postman())
+    }
 
-let cooperate = (work) => {
-    // Await configuration...
-    network.getMission().then (mission) => {
-        // ...and initialize local device.
-        compute.start(mission, work)
+    lead(work, graph, roles, devices)  {
+        this.network.serve()
+
+        // Build a mission statement describing the organisation of work.
+        let mission = this._buildMission(graph, roles, devices)
+
+        // Distribute the mission.
+        this.network.setMission(mission)
+
+        this._startComputing(work)
+    }
+
+    cooperate(work, leaderUrl) {
+        this.network.listen(leaderUrl)
+
+        this._startComputing(work)
+    }
+
+    _startComputing(work) {
+        // Await configuration...
+        this.network.getMission().then (mission)  {
+            this.graph = graph.create(mission.graph)
+
+            // ...and initialize local device.
+            this.compute.start(work)
+        }
+    }
+
+    _buildMission(graph, roles, hosts)  {
+        return {
+            graph: graph, roles: roles, hosts: hosts }
+    }
+
+    _setupCommunications() {
+        this.network.onData(this.postman.inbound)
+        this.postman.outbound(this.network.send)
+
+        this.postman.inbox(_process)
+    }
+
+    _process(message) {
+        let nextHop = _nextHopFor(role)
+        this.compute.process(role, message.data).then((result) => {
+            let message = { role: nextHop, data: result }
+            this.postman.outbox(message)
+        })
+    }
+
+    _nextHopFor(role) {
+        //TODO: use graph to determine next hop
     }
 }
 
-module.exports = {
-    begin: begin,
-    cooperate: cooperate,
-    roles: roles
-}
+module.exports = Host

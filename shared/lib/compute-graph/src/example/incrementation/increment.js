@@ -1,6 +1,6 @@
 'use strict'
 
-const host = require('host')
+const Host = require('host')
 const work = require('work')
 const graph = require('graph')
 
@@ -9,8 +9,9 @@ const _ = require('underscore')
 
 // Start as master unless --slave commandline argument is given
 let isMaster = _.find(process.argv.slice(2), (argument) => { argument == '--slave' }) == null
+let host = Host.make()
 
-if(host.isMaster()) {
+if(isMaster) {
     // We're the master node. Set up and kick off organization.
 
     const graph = require('graph')
@@ -21,19 +22,20 @@ if(host.isMaster()) {
     ])
 
     // Set up where each vertice will be computed.
-    let roles = host.roles({
+    let roles = {
         // role name => [ verticeName, ... ]
         'main': ['i', 'p']
-    })
+    }
 
     // Assign the defined distribution roles to devices.
     let devices = {
         'main': 'localhost'
     }
 
-    // Initialize networking.
-    host.begin(work, flow, roles, devices)
+    // Initialize networking and start computing.
+    host.lead(work, flow, roles, devices)
 }
-
-// Use the local node to do computation work.
-host.cooperate(work)
+else {
+    // Wait for network and start computing.
+    host.cooperate(work, 'ws://localhost')
+}
