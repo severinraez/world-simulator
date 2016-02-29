@@ -16,6 +16,9 @@ class Compute {
         this.outboxCallback = null
     }
 
+    start(work) {
+        
+    }
     //TODO: pass work in
 
     static make() {

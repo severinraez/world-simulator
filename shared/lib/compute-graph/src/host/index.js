@@ -60,15 +60,17 @@ class Host {
     }
 
     _process(message) {
-        let nextHop = _nextHopFor(role)
+        let nextHops = this._nextHopsFor(role)
         this.compute.process(role, message.data).then((result) => {
-            let message = { role: nextHop, data: result }
-            this.postman.outbox(message)
+            nextHops.forEach((hop) => {
+                let message = { role: role, data: result }
+                this.postman.outbox(message)
+            })
         })
     }
 
-    _nextHopFor(role) {
-        //TODO: use graph to determine next hop
+    _nextHopsFor(role) {
+        return graph.successors(role)
     }
 }
 
